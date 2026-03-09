@@ -1,0 +1,290 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Fonts ──────────────────────────────────────────────────────────────── */
+@font-face {
+  font-family: "Sora";
+  src: url("/assets/fonts/Sora.woff2") format("woff2");
+  font-display: swap;
+  font-weight: 100 800;
+}
+
+@font-face {
+  font-family: "Outfit";
+  src: url("/assets/fonts/Outfit.woff2") format("woff2");
+  font-display: swap;
+  font-weight: 100 900;
+}
+
+@font-face {
+  font-family: "Geist Mono";
+  src: url("/assets/fonts/GeistMono.woff2") format("woff2");
+  font-display: swap;
+  font-weight: 100 900;
+}
+
+/* ─── JARVIS Design Tokens (dark-only, arc-reactor aesthetic) ──────────────── */
+@layer base {
+  :root {
+    --radius: 0.5rem;
+
+    /* Space-dark background with deep navy tint */
+    --background: 0.08 0.015 250;
+    --foreground: 0.95 0.02 210;
+
+    /* Card: dark glass panels */
+    --card: 0.11 0.018 250;
+    --card-foreground: 0.92 0.02 210;
+
+    /* Popover */
+    --popover: 0.1 0.016 245;
+    --popover-foreground: 0.92 0.02 210;
+
+    /* Primary: electric cyan arc-reactor glow */
+    --primary: 0.82 0.18 200;
+    --primary-foreground: 0.07 0.015 250;
+
+    /* Secondary: muted steel blue */
+    --secondary: 0.16 0.022 245;
+    --secondary-foreground: 0.82 0.06 210;
+
+    /* Muted */
+    --muted: 0.14 0.018 245;
+    --muted-foreground: 0.55 0.04 215;
+
+    /* Accent: brighter cyan-white */
+    --accent: 0.72 0.2 195;
+    --accent-foreground: 0.07 0.015 250;
+
+    /* Destructive: alert red */
+    --destructive: 0.62 0.24 27;
+    --destructive-foreground: 0.98 0 0;
+
+    /* Borders: subtle cyan */
+    --border: 0.82 0.18 200 / 15%;
+    --input: 0.82 0.18 200 / 10%;
+    --ring: 0.82 0.18 200;
+
+    /* Arc-reactor custom tokens */
+    --arc-cyan: 0.82 0.22 200;
+    --arc-blue: 0.6 0.25 240;
+    --arc-glow: 0.88 0.18 195;
+    --arc-dim: 0.45 0.12 220;
+    --space-bg: 0.07 0.014 250;
+    --space-mid: 0.12 0.02 248;
+
+    /* Charts */
+    --chart-1: 0.82 0.22 200;
+    --chart-2: 0.65 0.2 240;
+    --chart-3: 0.72 0.18 180;
+    --chart-4: 0.58 0.2 260;
+    --chart-5: 0.7 0.15 195;
+
+    /* Sidebar */
+    --sidebar: 0.1 0.016 248;
+    --sidebar-foreground: 0.92 0.02 210;
+    --sidebar-primary: 0.82 0.18 200;
+    --sidebar-primary-foreground: 0.07 0.015 250;
+    --sidebar-accent: 0.16 0.022 245;
+    --sidebar-accent-foreground: 0.82 0.06 210;
+    --sidebar-border: 0.82 0.18 200 / 12%;
+    --sidebar-ring: 0.82 0.18 200;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: "Outfit", sans-serif;
+    overflow: hidden;
+    height: 100dvh;
+    width: 100dvw;
+  }
+
+  #root {
+    height: 100dvh;
+    width: 100dvw;
+    overflow: hidden;
+  }
+
+  /* Prevent zoom on inputs on mobile */
+  input, textarea, select {
+    font-size: 16px !important;
+  }
+}
+
+/* ─── Jarvis Orb Animations ──────────────────────────────────────────────── */
+@layer utilities {
+  /* Pulse rings */
+  @keyframes orb-idle-pulse {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 0.7;
+    }
+    50% {
+      transform: scale(1.04);
+      opacity: 1;
+    }
+  }
+
+  @keyframes orb-ring-rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes orb-ring-rotate-reverse {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(-360deg); }
+  }
+
+  @keyframes orb-listen-ripple {
+    0% {
+      transform: scale(0.95);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(1.6);
+      opacity: 0;
+    }
+  }
+
+  @keyframes orb-speak-ring {
+    0% {
+      transform: scale(1);
+      opacity: 0.9;
+    }
+    50% {
+      transform: scale(1.12);
+      opacity: 0.6;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 0.9;
+    }
+  }
+
+  @keyframes scan-line {
+    0% { transform: translateY(-100%); opacity: 0.6; }
+    100% { transform: translateY(200%); opacity: 0; }
+  }
+
+  @keyframes hex-rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(60deg); }
+  }
+
+  @keyframes flicker {
+    0%, 100% { opacity: 1; }
+    92% { opacity: 1; }
+    93% { opacity: 0.8; }
+    94% { opacity: 1; }
+    96% { opacity: 0.85; }
+    97% { opacity: 1; }
+  }
+
+  @keyframes panel-slide-up {
+    from {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes panel-slide-down {
+    from {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+  }
+
+  @keyframes transcript-fade-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes status-pulse {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 1; }
+  }
+
+  @keyframes corner-blink {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+
+  .animate-orb-idle { animation: orb-idle-pulse 3s ease-in-out infinite; }
+  .animate-orb-ring-cw { animation: orb-ring-rotate 8s linear infinite; }
+  .animate-orb-ring-ccw { animation: orb-ring-rotate-reverse 12s linear infinite; }
+  .animate-orb-ring-cw-fast { animation: orb-ring-rotate 4s linear infinite; }
+  .animate-listen-ripple { animation: orb-listen-ripple 1.4s ease-out infinite; }
+  .animate-speak-ring { animation: orb-speak-ring 0.8s ease-in-out infinite; }
+  .animate-scan-line { animation: scan-line 3s linear infinite; }
+  .animate-flicker { animation: flicker 8s ease-in-out infinite; }
+  .animate-panel-up { animation: panel-slide-up 0.35s cubic-bezier(0.32, 0.72, 0, 1) forwards; }
+  .animate-transcript { animation: transcript-fade-in 0.2s ease-out forwards; }
+  .animate-status-pulse { animation: status-pulse 2s ease-in-out infinite; }
+  .animate-corner-blink { animation: corner-blink 1.5s ease-in-out infinite; }
+
+  /* Glassmorphism panel */
+  .glass-panel {
+    background: oklch(0.1 0.018 248 / 0.85);
+    backdrop-filter: blur(24px) saturate(1.8);
+    -webkit-backdrop-filter: blur(24px) saturate(1.8);
+    border: 1px solid oklch(0.82 0.18 200 / 0.15);
+  }
+
+  .glass-card {
+    background: oklch(0.12 0.02 248 / 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid oklch(0.82 0.18 200 / 0.12);
+  }
+
+  /* Arc reactor glow text */
+  .text-arc {
+    color: oklch(0.88 0.2 195);
+  }
+
+  .text-arc-dim {
+    color: oklch(0.55 0.12 210);
+  }
+
+  .glow-text {
+    text-shadow:
+      0 0 10px oklch(0.82 0.22 200 / 0.8),
+      0 0 30px oklch(0.82 0.22 200 / 0.4),
+      0 0 60px oklch(0.82 0.22 200 / 0.2);
+  }
+
+  .glow-text-sm {
+    text-shadow:
+      0 0 6px oklch(0.82 0.22 200 / 0.7),
+      0 0 15px oklch(0.82 0.22 200 / 0.3);
+  }
+
+  /* Scrollbar styling */
+  .scrollbar-arc::-webkit-scrollbar {
+    width: 4px;
+  }
+  .scrollbar-arc::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-arc::-webkit-scrollbar-thumb {
+    background: oklch(0.82 0.18 200 / 0.3);
+    border-radius: 2px;
+  }
+}

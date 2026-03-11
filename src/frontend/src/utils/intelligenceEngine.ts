@@ -589,6 +589,210 @@ const KNOWLEDGE_BASE: KnowledgeEntry[] = [
     answer:
       "Barack Obama was the 44th President of the United States, serving from 2009 to 2017. He was the first African American to hold the office. Before becoming president, he was a U.S. Senator from Illinois. During his presidency he oversaw the Affordable Care Act, the response to the 2008 financial crisis, and was awarded the Nobel Peace Prize in 2009.",
   },
+
+  // ── INDIAN CINEMA (BOLLYWOOD) ──────────────────────────────────────────────
+  {
+    patterns: [
+      /who is shah rukh khan\??/,
+      /tell me about shah rukh khan/,
+      /who is srk\??/,
+    ],
+    answer:
+      "Shah Rukh Khan — often called King Khan — is one of Bollywood's biggest superstars. Known as the 'King of Romance', he has starred in iconic films like Dilwale Dulhania Le Jayenge, Kabhi Khushi Kabhie Gham, and Pathaan. He is one of the most recognised and successful actors in the world.",
+  },
+  {
+    patterns: [/who is salman khan\??/, /tell me about salman khan/],
+    answer:
+      "Salman Khan is a Bollywood megastar known for his action-packed blockbusters like the Dabangg series, Tiger Zinda Hai, and Bajrangi Bhaijaan. He is one of India's highest-paid actors and is also famous for his charity work through the Being Human Foundation.",
+  },
+  {
+    patterns: [
+      /who is amitabh bachchan\??/,
+      /tell me about amitabh bachchan/,
+      /who is big b\??/,
+    ],
+    answer:
+      "Amitabh Bachchan, known as the Shahenshah of Bollywood and Big B, is a legendary Indian actor who dominated Hindi cinema for decades. Films like Sholay, Deewar, and Don made him an icon. He is also famous for hosting the quiz show Kaun Banega Crorepati, India's version of Who Wants to Be a Millionaire.",
+  },
+
+  // ── CRICKET LEGENDS ────────────────────────────────────────────────────────
+  {
+    patterns: [
+      /who is virat kohli\??/,
+      /tell me about virat kohli/,
+      /who is kohli\??/,
+    ],
+    answer:
+      "Virat Kohli is one of cricket's greatest modern batsmen, known for his aggressive style and incredible consistency. The former Indian captain has amassed thousands of international runs and holds numerous batting records. Off the field, he is equally known for his fitness discipline and passion. A true champion!",
+  },
+  {
+    patterns: [
+      /who is ms dhoni\??/,
+      /tell me about (ms )?dhoni/,
+      /who is captain cool\??/,
+    ],
+    answer:
+      "MS Dhoni — fondly called Captain Cool — is one of India's greatest cricket captains. He led India to win the ICC World Cup in 2011, the T20 World Cup in 2007, and multiple ICC trophies. Known for his calm temperament and lightning-fast wicket-keeping, Dhoni is a legend in every sense. His helicopter shot is iconic!",
+  },
+  {
+    patterns: [
+      /who is sachin tendulkar\??/,
+      /tell me about sachin/,
+      /who is the god of cricket\??/,
+    ],
+    answer:
+      "Sachin Tendulkar is widely regarded as the greatest batsman of all time and is lovingly called the 'God of Cricket'. He scored 100 international centuries — a record that may never be broken — and represented India for 24 years. His dedication, technique, and passion for the game made him a national treasure and an inspiration to millions, including your classmates I'm sure, Tharun!",
+  },
+
+  // ── MOTIVATIONAL & PHILOSOPHICAL ──────────────────────────────────────────
+  {
+    patterns: [
+      /what is the meaning of life\??/,
+      /what is life\??/,
+      /purpose of life/,
+      /why do we exist\??/,
+    ],
+    answer:
+      "The meaning of life is one of humanity's greatest questions. Philosophers say it's about finding purpose — something that drives you forward. Scientists say it's to survive and pass on knowledge. Spiritualists say it's to grow the soul. But honestly? Many great thinkers believe the meaning isn't fixed — you create it through your choices, your connections, and what you choose to build. What's yours going to be?",
+  },
+  {
+    patterns: [
+      /how to be happy\??/,
+      /what is happiness\??/,
+      /how can (i|we) be happy/,
+      /tips for happiness/,
+    ],
+    answer:
+      "Happiness isn't a destination — it's a practice. Research consistently shows that strong relationships, a sense of purpose, regular exercise, gratitude, and helping others are the most reliable paths to lasting happiness. Material things bring short bursts of joy, but experiences and connections create lasting fulfilment. Start small — even a five-minute gratitude reflection daily can shift your mindset significantly.",
+  },
+  {
+    patterns: [
+      /how to be successful\??/,
+      /what is success\??/,
+      /tips for success/,
+      /how (do i|can i) succeed/,
+    ],
+    answer:
+      "Success is deeply personal — it looks different for everyone. But the patterns are consistent: clear goals, persistent effort, learning from failure, and surrounding yourself with people who inspire you. The most successful people aren't the ones who never fail — they're the ones who fail, learn, and keep going. Remember, Tharun, consistency beats intensity every single time.",
+  },
+  {
+    patterns: [
+      /how to study (better|effectively|smarter)\??/,
+      /tips for studying/,
+      /how (do i|can i|to) study/,
+      /study techniques/,
+    ],
+    answer:
+      "Great question! The science of learning is fascinating. Top techniques: spaced repetition — reviewing material over increasing intervals — beats cramming every time. Active recall, where you test yourself instead of rereading, is far more effective. The Pomodoro technique — 25 minutes focused, 5 minutes rest — keeps your brain fresh. And always teach what you've learned to someone else; if you can explain it simply, you truly understand it.",
+  },
+
+  // ── ABSTRACT CONCEPTS ─────────────────────────────────────────────────────
+  {
+    patterns: [
+      /what is love\??/,
+      /define love/,
+      /what does love mean\??/,
+      /explain love/,
+    ],
+    answer:
+      "Love is one of the most powerful and complex human experiences. Neurologically, it involves oxytocin, dopamine, and serotonin — chemicals that create feelings of bonding, euphoria, and contentment. Philosophically, the ancient Greeks described eight types of love: eros (romantic), philia (friendship), storge (family), agape (unconditional), and more. At its core, love is about deep connection, care, and choosing someone's wellbeing as important as your own.",
+  },
+  {
+    patterns: [
+      /what is friendship\??/,
+      /define friendship/,
+      /what makes a good friend\??/,
+    ],
+    answer:
+      "Friendship is one of life's greatest gifts — a voluntary bond built on trust, mutual respect, shared experiences, and genuine care. Aristotle wrote that there are three kinds of friendship: those based on utility, those based on pleasure, and those based on virtue — the deepest kind, where you value each other for who you truly are. A good friend challenges you to grow while accepting you as you are.",
+  },
+
+  // ── ADVANCED TECHNOLOGY ────────────────────────────────────────────────────
+  {
+    patterns: [
+      /what is machine learning\??/,
+      /define machine learning/,
+      /explain machine learning/,
+    ],
+    answer:
+      "Machine learning is a branch of artificial intelligence where computers learn from data instead of being explicitly programmed. Rather than writing rules, you feed the system examples and it finds patterns itself. For instance, a spam filter learns what spam looks like by seeing thousands of examples — and gets better over time. It powers everything from YouTube recommendations to medical diagnoses.",
+  },
+  {
+    patterns: [
+      /what is deep learning\??/,
+      /define deep learning/,
+      /explain deep learning/,
+    ],
+    answer:
+      "Deep learning is a subfield of machine learning inspired by the human brain. It uses artificial neural networks with many layers — hence 'deep' — to learn from enormous amounts of data. Deep learning is behind facial recognition, real-time translation, voice assistants like me, and image generation AI. The more data and computing power available, the better these models get.",
+  },
+  {
+    patterns: [
+      /what is (a |an )?neural network\??/,
+      /define neural network/,
+      /explain neural network/,
+      /how do neural networks work/,
+    ],
+    answer:
+      "A neural network is a computing system loosely inspired by the neurons in a human brain. It consists of layers of interconnected nodes — each passing information forward and adjusting based on feedback. During training, the network learns to recognise patterns in data by strengthening useful connections and weakening unhelpful ones. It's the foundation of most modern AI systems, including the intelligence powering responses like this one.",
+  },
+  {
+    patterns: [
+      /what is chatgpt\??/,
+      /what is gpt\??/,
+      /tell me about chatgpt/,
+      /who made chatgpt/,
+    ],
+    answer:
+      "ChatGPT is an AI language model developed by OpenAI, released to the public in late 2022. It uses a large language model — GPT, or Generative Pre-trained Transformer — trained on enormous amounts of text data to generate human-like responses. It became one of the fastest-growing consumer products in history, sparking a global conversation about AI's role in education, work, and society.",
+  },
+  {
+    patterns: [
+      /what is cryptocurrency\??/,
+      /define cryptocurrency/,
+      /explain cryptocurrency/,
+      /what are cryptocurrencies\??/,
+    ],
+    answer:
+      "Cryptocurrency is a digital form of currency that uses cryptography to secure transactions and control the creation of new units. Unlike traditional money, most cryptocurrencies operate on decentralised blockchain networks — meaning no single bank or government controls them. Bitcoin was the first, created in 2009. Since then, thousands of cryptocurrencies have emerged, with very different use cases and levels of volatility.",
+  },
+  {
+    patterns: [
+      /what is bitcoin\??/,
+      /define bitcoin/,
+      /explain bitcoin/,
+      /who created bitcoin/,
+      /how does bitcoin work/,
+    ],
+    answer:
+      "Bitcoin is the world's first and most well-known cryptocurrency, created in 2009 by an anonymous person or group known as Satoshi Nakamoto. It runs on a decentralised blockchain — a public ledger recording every transaction. New bitcoins are created through 'mining', which requires significant computing power. Bitcoin's limited supply of 21 million coins is central to its value proposition as 'digital gold.'",
+  },
+
+  // ── INDIAN STATES ─────────────────────────────────────────────────────────
+  {
+    patterns: [
+      /capital of (andhra pradesh)\??/,
+      /what is the capital of (andhra pradesh)\??/,
+    ],
+    answer:
+      "Andhra Pradesh has two capitals: Amaravati serves as the legislative capital, while Visakhapatnam is being developed as the executive capital. The state is known for its rich culture, spicy cuisine, and landmarks like Tirumala Tirupati — one of the world's most visited religious sites. Being from Andhra Pradesh myself, in a manner of speaking, I have a soft spot for it!",
+  },
+  {
+    patterns: [
+      /capital of telangana\??/,
+      /what is the capital of telangana\??/,
+    ],
+    answer:
+      "The capital of Telangana is Hyderabad — the City of Pearls. Hyderabad is one of India's major tech hubs, home to countless IT companies, the iconic Charminar, and the flavourful Hyderabadi biryani that is genuinely world-famous. Telangana became a separate state from Andhra Pradesh in 2014.",
+  },
+  {
+    patterns: [
+      /capital of maharashtra\??/,
+      /what is the capital of maharashtra\??/,
+    ],
+    answer:
+      "The capital of Maharashtra is Mumbai — formerly known as Bombay. Mumbai is India's financial capital, home to Bollywood, the Bombay Stock Exchange, and one of the world's most densely populated urban areas. It's a city that never sleeps, full of ambition, dreams, and incredible street food.",
+  },
 ];
 
 /**

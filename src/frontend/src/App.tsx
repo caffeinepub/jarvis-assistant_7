@@ -99,8 +99,8 @@ export default function App() {
   const [micPermission, setMicPermission] = useState<
     "unknown" | "granted" | "denied"
   >("unknown");
-  const [voiceRate, setVoiceRate] = useState(0.88);
-  const [voicePitch, setVoicePitch] = useState(1.0);
+  const [voiceRate, setVoiceRate] = useState(0.85);
+  const [voicePitch, setVoicePitch] = useState(0.95);
   const [voiceVolume, setVoiceVolume] = useState(1.0);
 
   const recognitionRef = useRef<ISpeechRecognition | null>(null);
@@ -111,8 +111,8 @@ export default function App() {
   // Use a ref for startListening to break circular dependency with speak
   const startListeningRef = useRef<() => void>(() => {});
   // Keep voice setting refs in sync for use inside speak callback
-  const voiceRateRef = useRef(0.88);
-  const voicePitchRef = useRef(1.0);
+  const voiceRateRef = useRef(0.85);
+  const voicePitchRef = useRef(0.95);
   const voiceVolumeRef = useRef(1.0);
 
   const addMessage = useAddMessage();
@@ -152,9 +152,12 @@ export default function App() {
       };
       tryLoadVoices();
 
-      // Also listen for the voiceschanged event
+      // Also listen for the voiceschanged event — warm up synthesis engine
       window.speechSynthesis.addEventListener("voiceschanged", () => {
-        // Voices are now available — no action needed, getJarvisVoice will pick them up
+        // Warm up: speak a silent utterance so Android Chrome initialises the audio pipeline
+        const warmUp = new SpeechSynthesisUtterance(" ");
+        warmUp.volume = 0;
+        window.speechSynthesis.speak(warmUp);
       });
     }
   }, []);
@@ -165,15 +168,17 @@ export default function App() {
     const voices = synthRef.current.getVoices();
     return (
       voices.find((v) => v.name === "Google US English") ||
-      voices.find((v) => v.name === "Google UK English Female") ||
       voices.find((v) => v.name.toLowerCase().includes("zira")) ||
+      voices.find((v) => v.name === "Google UK English Female") ||
       voices.find(
         (v) =>
-          v.name.toLowerCase().includes("samantha") ||
-          v.name.toLowerCase().includes("victoria") ||
-          v.name.toLowerCase().includes("karen") ||
-          v.name.toLowerCase().includes("moira") ||
-          v.name.toLowerCase().includes("tessa"),
+          v.lang === "en-US" &&
+          (v.name.toLowerCase().includes("female") ||
+            v.name.toLowerCase().includes("samantha") ||
+            v.name.toLowerCase().includes("victoria") ||
+            v.name.toLowerCase().includes("karen") ||
+            v.name.toLowerCase().includes("moira") ||
+            v.name.toLowerCase().includes("tessa")),
       ) ||
       voices.find((v) => v.lang === "en-US") ||
       voices.find((v) => v.lang === "en-GB") ||
@@ -208,7 +213,7 @@ export default function App() {
 
         // Resume continuous listening after speaking
         if (continuousModeRef.current) {
-          setTimeout(() => startListeningRef.current(), 300);
+          setTimeout(() => startListeningRef.current(), 150);
         }
       };
 
@@ -266,12 +271,12 @@ export default function App() {
 
         case "greeting":
           response =
-            "Hello! Great to hear from you. All systems are up and running. How can I help you today?";
+            "Hey Tharun! Great to hear from you. All systems are running perfectly. How can I help you today?";
           break;
 
         case "goodbye":
           response =
-            "Alright, I'll be standing by whenever you need me. Take care!";
+            "Alright Tharun, I'll be right here whenever you need me. Take care!";
           if (continuousModeRef.current) {
             setContinuousMode(false);
             stopListening();
@@ -598,7 +603,7 @@ export default function App() {
   useEffect(() => {
     const t = setTimeout(() => {
       speakRef.current(
-        "Good to see you! I'm Jarvis, your intelligent assistant. I'm fully operational and ready to help. What can I do for you today?",
+        "Hey Tharun! I'm Jarvis, your intelligent assistant. All systems are ready. What can I do for you?",
       );
     }, 1200);
     return () => clearTimeout(t);

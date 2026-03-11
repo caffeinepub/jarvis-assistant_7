@@ -43,7 +43,6 @@ const CSE_B_STUDENTS: Record<string, { name: string; description: string }> = {
     description: "he is the most wanted criminal in India",
   },
   "583": { name: "HUSSAIN", description: "he is gym boy in class" },
-  "585": { name: "585", description: "he is the secret Lover in all branches" },
   "586": {
     name: "AVINASH",
     description: "he is most wanted lover boy in college",
@@ -354,12 +353,12 @@ export function buildHelpText(): string {
 }
 
 const FALLBACK_RESPONSES = [
-  "I'm not entirely sure about that. Would you like me to search the web?",
-  "That one's outside my knowledge base. Want me to look it up online?",
-  "Hmm, I don't have a confident answer for that. Say 'search for...' to find out.",
-  "I couldn't find that in my memory banks. Should I search for it?",
-  "Not something I know off the top of my circuits. Want a web search?",
-  "That's a tricky one. I can search the web for you — just say 'search for' followed by your topic.",
+  "Hmm, that's a curious one, Tharun! My best guess is it's related to something I haven't fully indexed yet. Try saying 'search for' followed by your topic and I'll pull up the best results for you!",
+  "Great question! I don't have a direct answer in my memory banks right now, but I'm thinking it could be worth exploring online. Say 'search for' followed by your topic and I'll open it up.",
+  "That one's stretching my circuits a little! My instinct says there's something interesting there, but I'd rather give you a reliable answer. Want me to search the web for it?",
+  "Interesting — I have some partial knowledge about this but not enough to give you a confident answer. My best advice: say 'search for' followed by your question and let's find out together!",
+  "I'm reaching into my knowledge banks and coming up a bit short on that one. But don't worry — just say 'search for' followed by what you want to know, and I'll find it for you right away.",
+  "That's outside my current knowledge, but I love the curiosity! I can open a web search for you — just say 'search for' followed by your topic and we'll get to the bottom of it.",
 ];
 
 export function getVariedFallback(): string {

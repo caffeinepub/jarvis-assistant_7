@@ -32,7 +32,7 @@ import {
   lookupCseBStudent,
   processCommand,
 } from "./utils/commandProcessor";
-import { answerGeneral } from "./utils/intelligenceEngine";
+import { answerGeneral, searchWeb } from "./utils/intelligenceEngine";
 
 type Panel = "conversation" | "reminders" | "notes" | null;
 
@@ -40,6 +40,7 @@ interface LocalMessage {
   id: string;
   role: Role;
   text: string;
+  isWebSearch?: boolean;
 }
 
 // Speech API types
@@ -258,6 +259,7 @@ export default function App() {
       setLocalMessages((prev) => [...prev, userMsg]);
 
       let response = "";
+      let isWebSearchResult = false;
       const cmd = processCommand(input);
 
       switch (cmd.type) {
@@ -317,7 +319,9 @@ export default function App() {
               .slice(0, 5)
               .map((r, i) => `${i + 1}. ${r.title}`)
               .join(". ");
-            response = `You have ${pending.length} active ${pending.length === 1 ? "reminder" : "reminders"}: ${titles}.`;
+            response = `You have ${pending.length} active ${
+              pending.length === 1 ? "reminder" : "reminders"
+            }: ${titles}.`;
           }
           setActivePanel("reminders");
           break;
@@ -330,7 +334,9 @@ export default function App() {
           } else {
             try {
               await addNote.mutateAsync(content);
-              response = `Note saved: "${content.slice(0, 60)}${content.length > 60 ? "..." : ""}".`;
+              response = `Note saved: "${content.slice(0, 60)}${
+                content.length > 60 ? "..." : ""
+              }".`;
             } catch {
               response = "I encountered an error saving that note.";
             }
@@ -342,7 +348,9 @@ export default function App() {
           if (notes.length === 0) {
             response = "No notes on file yet. Your data banks are clear.";
           } else {
-            response = `You have ${notes.length} ${notes.length === 1 ? "note" : "notes"} on file.`;
+            response = `You have ${notes.length} ${
+              notes.length === 1 ? "note" : "notes"
+            } on file.`;
           }
           setActivePanel("notes");
           break;
@@ -457,9 +465,23 @@ export default function App() {
         }
 
         default: {
-          // Try intelligence engine first (covers general_question + unknown)
+          // Try intelligence engine first
           const smartAnswer = answerGeneral(input, localMessages);
-          response = smartAnswer || getVariedFallback();
+          if (smartAnswer) {
+            response = smartAnswer;
+          } else {
+            // Fallback: web search via Wikipedia
+            setStatusText("SEARCHING WEB...");
+            setOrbState("thinking");
+            const webResult = await searchWeb(input);
+            if (webResult) {
+              response = webResult;
+              isWebSearchResult = true;
+            } else {
+              response =
+                "I couldn't find that. Try asking differently, Tharun.";
+            }
+          }
           break;
         }
       }
@@ -468,6 +490,7 @@ export default function App() {
         id: `jarvis-${Date.now()}`,
         role: Role.jarvis,
         text: response,
+        isWebSearch: isWebSearchResult,
       };
       setLocalMessages((prev) => [...prev, jarvisMsg]);
 
@@ -614,6 +637,7 @@ export default function App() {
     LISTENING: "oklch(0.88 0.2 185)",
     SPEAKING: "oklch(0.92 0.15 195)",
     PROCESSING: "oklch(0.75 0.18 220)",
+    "SEARCHING WEB...": "oklch(0.78 0.2 160)",
   };
 
   return (
@@ -639,40 +663,101 @@ export default function App() {
         }}
       />
 
+      {/* Animated scan line */}
+      <div
+        className="absolute inset-0 pointer-events-none overflow-hidden"
+        style={{ zIndex: 0 }}
+      >
+        <div
+          className="absolute left-0 right-0"
+          style={{
+            height: "2px",
+            background:
+              "linear-gradient(90deg, transparent 0%, oklch(0.82 0.22 200 / 0.15) 30%, oklch(0.88 0.18 195 / 0.3) 50%, oklch(0.82 0.22 200 / 0.15) 70%, transparent 100%)",
+            animation: "scan-line 6s linear infinite",
+            top: "0",
+          }}
+        />
+      </div>
+
       {/* Corner decorations */}
-      <div className="absolute top-3 left-3 pointer-events-none">
+      <div
+        className="absolute top-3 left-3 pointer-events-none"
+        style={{ zIndex: 1 }}
+      >
         <div
-          className="w-12 h-12"
+          className="w-14 h-14 animate-corner-blink"
           style={{
-            borderTop: "1px solid oklch(0.82 0.22 200 / 0.3)",
-            borderLeft: "1px solid oklch(0.82 0.22 200 / 0.3)",
+            borderTop: "2px solid oklch(0.82 0.22 200 / 0.6)",
+            borderLeft: "2px solid oklch(0.82 0.22 200 / 0.6)",
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            top: "3px",
+            left: "18px",
+            width: "6px",
+            height: "2px",
+            background: "oklch(0.82 0.22 200 / 0.5)",
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            top: "18px",
+            left: "3px",
+            width: "2px",
+            height: "6px",
+            background: "oklch(0.82 0.22 200 / 0.5)",
           }}
         />
       </div>
-      <div className="absolute top-3 right-3 pointer-events-none">
+      <div
+        className="absolute top-3 right-3 pointer-events-none"
+        style={{ zIndex: 1 }}
+      >
         <div
-          className="w-12 h-12"
+          className="w-14 h-14 animate-corner-blink"
           style={{
-            borderTop: "1px solid oklch(0.82 0.22 200 / 0.3)",
-            borderRight: "1px solid oklch(0.82 0.22 200 / 0.3)",
+            borderTop: "2px solid oklch(0.82 0.22 200 / 0.6)",
+            borderRight: "2px solid oklch(0.82 0.22 200 / 0.6)",
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            top: "3px",
+            right: "18px",
+            width: "6px",
+            height: "2px",
+            background: "oklch(0.82 0.22 200 / 0.5)",
           }}
         />
       </div>
-      <div className="absolute bottom-3 left-3 pointer-events-none">
+      <div
+        className="absolute bottom-3 left-3 pointer-events-none"
+        style={{ zIndex: 1 }}
+      >
         <div
-          className="w-12 h-12"
+          className="w-14 h-14 animate-corner-blink"
           style={{
-            borderBottom: "1px solid oklch(0.82 0.22 200 / 0.3)",
-            borderLeft: "1px solid oklch(0.82 0.22 200 / 0.3)",
+            borderBottom: "2px solid oklch(0.82 0.22 200 / 0.6)",
+            borderLeft: "2px solid oklch(0.82 0.22 200 / 0.6)",
+            animationDelay: "0.5s",
           }}
         />
       </div>
-      <div className="absolute bottom-3 right-3 pointer-events-none">
+      <div
+        className="absolute bottom-3 right-3 pointer-events-none"
+        style={{ zIndex: 1 }}
+      >
         <div
-          className="w-12 h-12"
+          className="w-14 h-14 animate-corner-blink"
           style={{
-            borderBottom: "1px solid oklch(0.82 0.22 200 / 0.3)",
-            borderRight: "1px solid oklch(0.82 0.22 200 / 0.3)",
+            borderBottom: "2px solid oklch(0.82 0.22 200 / 0.6)",
+            borderRight: "2px solid oklch(0.82 0.22 200 / 0.6)",
+            animationDelay: "0.5s",
           }}
         />
       </div>
@@ -782,7 +867,9 @@ export default function App() {
                 width: "6px",
                 height: "6px",
                 background: statusColors[statusText] || "oklch(0.82 0.22 200)",
-                boxShadow: `0 0 8px ${statusColors[statusText] || "oklch(0.82 0.22 200)"}`,
+                boxShadow: `0 0 8px ${
+                  statusColors[statusText] || "oklch(0.82 0.22 200)"
+                }`,
                 transition: "all 0.3s ease",
               }}
             />
@@ -790,7 +877,9 @@ export default function App() {
               className="font-display text-xs tracking-[0.3em]"
               style={{
                 color: statusColors[statusText] || "oklch(0.82 0.22 200)",
-                textShadow: `0 0 8px ${statusColors[statusText] || "oklch(0.82 0.22 200 / 0.5)"}`,
+                textShadow: `0 0 8px ${
+                  statusColors[statusText] || "oklch(0.82 0.22 200 / 0.5)"
+                }`,
               }}
             >
               {statusText}
@@ -826,11 +915,16 @@ export default function App() {
             onChange={(e) => setTextInput(e.target.value)}
             placeholder="Type a command or question..."
             className="flex-1 px-4 rounded-xl outline-none"
+            data-ocid="jarvis.input"
             style={{
               background: hasSpeechAPI
                 ? "oklch(0.10 0.018 248 / 0.6)"
                 : "oklch(0.12 0.02 248 / 0.8)",
-              border: `1px solid ${hasSpeechAPI ? "oklch(0.82 0.22 200 / 0.15)" : "oklch(0.82 0.22 200 / 0.2)"}`,
+              border: `1px solid ${
+                hasSpeechAPI
+                  ? "oklch(0.82 0.22 200 / 0.15)"
+                  : "oklch(0.82 0.22 200 / 0.2)"
+              }`,
               color: "oklch(0.88 0.04 210)",
               fontSize: "16px",
               height: hasSpeechAPI ? "40px" : "48px",
@@ -839,6 +933,7 @@ export default function App() {
           />
           <button
             type="submit"
+            data-ocid="jarvis.submit_button"
             className="rounded-xl font-display text-xs tracking-widest"
             style={{
               background: "oklch(0.82 0.22 200)",
@@ -862,6 +957,7 @@ export default function App() {
             onClick={() => togglePanel("conversation")}
             className="flex flex-col items-center gap-1.5 min-w-[52px]"
             aria-label="Conversation"
+            data-ocid="jarvis.conversation.button"
           >
             <div
               className="w-12 h-12 rounded-2xl flex items-center justify-center transition-all"
@@ -908,6 +1004,7 @@ export default function App() {
                 onPointerLeave={handleMicPressEnd}
                 whileTap={{ scale: 0.93 }}
                 className="relative w-20 h-20 rounded-full flex items-center justify-center"
+                data-ocid="jarvis.primary_button"
                 style={{
                   background: isListening
                     ? "radial-gradient(circle, oklch(0.82 0.22 200 / 0.25) 0%, oklch(0.14 0.025 240) 100%)"
@@ -971,6 +1068,7 @@ export default function App() {
               }}
               className="flex flex-col items-center gap-1.5 min-w-[52px]"
               aria-label="Toggle continuous listening"
+              data-ocid="jarvis.toggle"
             >
               <div
                 className="w-12 h-12 rounded-2xl flex items-center justify-center transition-all"
@@ -1013,6 +1111,7 @@ export default function App() {
             whileTap={{ scale: 0.9 }}
             onClick={() => togglePanel("reminders")}
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl"
+            data-ocid="jarvis.reminders.button"
             style={{
               background:
                 activePanel === "reminders"
@@ -1053,6 +1152,7 @@ export default function App() {
             whileTap={{ scale: 0.9 }}
             onClick={() => togglePanel("notes")}
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl"
+            data-ocid="jarvis.notes.button"
             style={{
               background:
                 activePanel === "notes"

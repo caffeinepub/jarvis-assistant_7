@@ -3,6 +3,7 @@
  *
  * Invisible client-side knowledge layer. Not a visible feature — just makes
  * Jarvis answer general human questions naturally and intelligently.
+ * Also exports searchWeb for automatic fallback web lookup.
  */
 
 interface HistoryMessage {
@@ -134,40 +135,59 @@ const KNOWLEDGE_BASE: KnowledgeEntry[] = [
       /define blockchain/,
     ],
     answer:
-      "Blockchain is a type of database where data is stored in linked blocks across many computers at once, making it nearly impossible to alter. It's the technology behind cryptocurrencies and platforms like the Internet Computer — my own home — where apps run without central servers.",
+      "Blockchain is a type of database where data is stored in linked blocks across many computers at once, making it nearly impossible to alter. It's the technology behind cryptocurrencies and platforms like the Internet Computer.",
   },
   {
-    patterns: [
-      /what is python\??/,
-      /what is (the )?python (programming )?language/,
-    ],
+    patterns: [/what is (the )?cloud\??/, /what is cloud computing/],
     answer:
-      "Python is a popular, beginner-friendly programming language known for its clean, readable syntax. It's widely used in data science, machine learning, web development, and automation — making it one of the most versatile tools in a developer's toolbox.",
+      "Cloud computing means storing and processing data on remote servers over the internet instead of on your own device. Services like Google Drive, Netflix, and iCloud all run in the cloud — your phone accesses them, but the heavy lifting happens elsewhere.",
   },
   {
-    patterns: [
-      /what is javascript\??/,
-      /what is (the )?javascript (programming )?language/,
-    ],
+    patterns: [/what is chatgpt\??/, /what is gpt\??/, /what is openai\??/],
     answer:
-      "JavaScript is the programming language that powers interactive websites. Every time a button animates, a form validates, or a page updates without reloading — that's JavaScript at work. It also runs on servers via Node.js, making it useful for full-stack development.",
+      "ChatGPT is an AI language model made by OpenAI. It was trained on vast amounts of text and can hold conversations, write code, summarise documents, and much more. It represents a major leap in natural language understanding for AI systems.",
   },
   {
-    patterns: [/what is (a )?(computer )?virus\??/, /define (computer )?virus/],
+    patterns: [/what is bitcoin\??/, /how does bitcoin work/, /what is crypto/],
     answer:
-      "A computer virus is malicious software that replicates itself and spreads to other files or systems, often causing damage, stealing data, or slowing things down. The term echoes biological viruses because both self-replicate and cause harm to their host.",
-  },
-  {
-    patterns: [/how does the internet work/, /explain the internet/],
-    answer:
-      "When you visit a website, your device sends a request through your router and ISP to a server somewhere in the world. The server sends back data in small packets that travel through undersea cables and satellites, then reassemble on your screen — all in milliseconds.",
+      "Bitcoin is the world's first decentralised digital currency, created in 2009 by the pseudonymous Satoshi Nakamoto. It runs on a blockchain and allows peer-to-peer payments without banks. Its supply is capped at 21 million coins, making it scarce by design.",
   },
 
   // ── SCIENCE ────────────────────────────────────────────────────────────────
   {
-    patterns: [/what is gravity\??/, /define gravity/, /explain gravity/],
+    patterns: [
+      /what is a black hole\??/,
+      /how does a black hole (work|form)/,
+      /tell me about black holes/,
+    ],
     answer:
-      "Gravity is the fundamental force that attracts objects with mass toward one another. Earth's gravity is what keeps you on the ground and the Moon in orbit. Einstein described it as the curvature of spacetime caused by mass — the more massive an object, the more it bends the fabric of space.",
+      "A black hole is a region in space where gravity is so intense that nothing — not even light — can escape. They form when massive stars collapse at the end of their lives. At the centre is a singularity where the known laws of physics break down.",
+  },
+  {
+    patterns: [
+      /what is gravity\??/,
+      /how does gravity work/,
+      /explain gravity/,
+    ],
+    answer:
+      "Gravity is the force that attracts objects with mass towards each other. Einstein described it as a curvature in spacetime caused by mass and energy. On Earth, gravity gives you weight and keeps the moon in orbit. It's the weakest fundamental force, but acts across infinite distances.",
+  },
+  {
+    patterns: [
+      /what is quantum (physics|mechanics)\??/,
+      /explain quantum physics/,
+    ],
+    answer:
+      "Quantum mechanics is the branch of physics that describes how matter and energy behave at the smallest scales — atoms and subatomic particles. Unlike classical physics, quantum systems can exist in multiple states simultaneously, a phenomenon called superposition. It powers lasers, transistors, and MRI machines.",
+  },
+  {
+    patterns: [
+      /what is dna\??/,
+      /how does dna work/,
+      /what is deoxyribonucleic acid/,
+    ],
+    answer:
+      "DNA — deoxyribonucleic acid — is the molecule that carries the genetic instructions for life. It's shaped like a double helix and made of four chemical bases: A, T, C, and G. Your entire body is built from the instructions encoded in approximately 3 billion base pairs.",
   },
   {
     patterns: [
@@ -176,678 +196,212 @@ const KNOWLEDGE_BASE: KnowledgeEntry[] = [
       /speed of light/,
     ],
     answer:
-      "The speed of light in a vacuum is approximately 299,792,458 metres per second — roughly 300,000 kilometres every second. It's the universal speed limit, and nothing with mass can ever quite reach it. At that speed, light from the Sun reaches Earth in about 8 minutes.",
-  },
-  {
-    patterns: [
-      /what is water\??/,
-      /what is h2o\??/,
-      /define water/,
-      /chemical formula for water/,
-    ],
-    answer:
-      "Water is a molecule made of two hydrogen atoms bonded to one oxygen atom — H₂O. It's essential for all known life, covers about 71% of Earth's surface, and has remarkable properties like its high heat capacity and ability to dissolve many substances, making it the universal solvent.",
-  },
-  {
-    patterns: [/what is the sun\??/, /tell me about the sun/, /define the sun/],
-    answer:
-      "The Sun is a massive ball of hot plasma at the centre of our solar system, held together by its own gravity. It generates energy through nuclear fusion — fusing hydrogen atoms into helium — releasing the light and heat that make life on Earth possible. It's about 150 million kilometres away from us.",
-  },
-  {
-    patterns: [
-      /what is the moon\??/,
-      /tell me about the moon/,
-      /define the moon/,
-    ],
-    answer:
-      "The Moon is Earth's only natural satellite, orbiting about 384,000 kilometres away. It formed billions of years ago from debris after a Mars-sized object collided with early Earth. The Moon's gravity causes our ocean tides, and its familiar phases are just shadows as it orbits around us.",
-  },
-  {
-    patterns: [
-      /what is (the )?earth\??/,
-      /tell me about (the )?earth/,
-      /define (the )?earth/,
-    ],
-    answer:
-      "Earth is the third planet from the Sun and the only known planet to harbour life. It has a thin atmosphere protecting us from radiation, a magnetic field shielding us from solar wind, and liquid water — the unique combination that makes life here possible.",
-  },
-  {
-    patterns: [
-      /what is a black hole\??/,
-      /define black hole/,
-      /explain black hole/,
-      /how does a black hole work/,
-    ],
-    answer:
-      "A black hole is a region of space where gravity is so intense that nothing — not even light — can escape once it crosses the event horizon. They form when massive stars collapse under their own gravity. Despite the name, they're not empty holes; they contain enormous amounts of matter packed into an incredibly small space.",
-  },
-  {
-    patterns: [
-      /what is dna\??/,
-      /define dna/,
-      /explain dna/,
-      /what does dna stand for/,
-    ],
-    answer:
-      "DNA stands for deoxyribonucleic acid — it's the molecule that carries the genetic instructions for the development, function, growth, and reproduction of all known living organisms. Think of it as a biological instruction manual, written in a four-letter code, coiled inside almost every cell in your body.",
-  },
-  {
-    patterns: [
-      /what is a (biological )?virus\??/,
-      /how do (biological )?viruses work/,
-    ],
-    answer:
-      "A biological virus is a microscopic infectious agent that replicates only inside the cells of a living host. It hijacks the host's cellular machinery to make copies of itself, which can then spread to other cells or organisms. Unlike bacteria, viruses aren't technically alive — they're more like genetic pirates.",
-  },
-
-  // ── HEALTH ─────────────────────────────────────────────────────────────────
-  {
-    patterns: [
-      /how (many hours|much) (sleep|rest)/,
-      /how long should (i|we|a person) sleep/,
-      /recommended sleep/,
-    ],
-    answer:
-      "Most adults need between 7 and 9 hours of sleep per night for optimal health. Teenagers need a bit more — around 8 to 10 hours. Consistent quality sleep helps memory, mood, immune function, and everything in between.",
-  },
-  {
-    patterns: [
-      /how much water should (i|we|a person) drink/,
-      /daily water (intake|consumption)/,
-      /how many (glasses|litres|liters) of water/,
-    ],
-    answer:
-      "The general recommendation is about 2 litres — or 8 glasses — of water per day for adults, though it varies by body size, activity level, and climate. A good rule of thumb: drink enough so your urine is pale yellow throughout the day.",
-  },
-
-  // ── FAMOUS PEOPLE ──────────────────────────────────────────────────────────
-  {
-    patterns: [
-      /who is elon musk\??/,
-      /tell me about elon musk/,
-      /who('s| is) elon/,
-    ],
-    answer:
-      "Elon Musk is a South African-born entrepreneur and business magnate. He's best known as the CEO of Tesla — the electric vehicle company — and SpaceX, his private space exploration firm. He's also associated with ventures like Neuralink and the acquisition of Twitter, now known as X.",
-  },
-  {
-    patterns: [/who is (bill gates|bill gate)\??/, /tell me about bill gates/],
-    answer:
-      "Bill Gates co-founded Microsoft in 1975 alongside Paul Allen, making personal computing accessible to millions. Microsoft's Windows operating system became the backbone of modern desktop computing. Gates later became a prominent philanthropist through the Bill & Melinda Gates Foundation, focusing on global health and education.",
-  },
-  {
-    patterns: [/who is steve jobs\??/, /tell me about steve jobs/],
-    answer:
-      "Steve Jobs was the co-founder of Apple and one of the most influential figures in tech history. He pioneered the personal computer revolution with the Mac, then revolutionised music with the iPod, phones with the iPhone, and tablets with the iPad. He passed away in 2011, but his design philosophy still shapes Apple today.",
-  },
-  {
-    patterns: [/who is (mark zuckerberg|zuckerberg)\??/],
-    answer:
-      "Mark Zuckerberg is the co-founder and CEO of Meta — the company behind Facebook, Instagram, and WhatsApp. He launched Facebook from his Harvard dorm room in 2004, and it grew into one of the most widely used social platforms in the world.",
-  },
-
-  // ── CAPITALS ───────────────────────────────────────────────────────────────
-  {
-    patterns: [
-      /capital (of|city of) (the )?(united states|usa|america|us)\??/,
-      /what('s| is) the capital of (the )?(united states|usa|america|us)\??/,
-    ],
-    answer:
-      "The capital of the United States is Washington, D.C. — the District of Columbia. It was established as the nation's capital in 1790 and is home to the White House, Congress, and the Supreme Court.",
-  },
-  {
-    patterns: [
-      /capital (of|city of) (the )?(united kingdom|uk|britain|england)\??/,
-      /what('s| is) the capital of (the )?(united kingdom|uk|britain|england)\??/,
-    ],
-    answer:
-      "The capital of the United Kingdom is London. It's one of the world's most visited cities and has served as England's capital for nearly a thousand years, home to Buckingham Palace, the Houses of Parliament, and the Tower of London.",
-  },
-  {
-    patterns: [
-      /capital (of|city of) france\??/,
-      /what('s| is) the capital of france\??/,
-    ],
-    answer:
-      "The capital of France is Paris. Known as the City of Light, Paris is famous for the Eiffel Tower, the Louvre museum, and its rich culture, cuisine, and fashion.",
-  },
-  {
-    patterns: [
-      /capital (of|city of) germany\??/,
-      /what('s| is) the capital of germany\??/,
-    ],
-    answer:
-      "The capital of Germany is Berlin. It's the largest city in Germany and carries enormous historical significance — from the Prussian Empire to the fall of the Berlin Wall in 1989.",
-  },
-  {
-    patterns: [
-      /capital (of|city of) japan\??/,
-      /what('s| is) the capital of japan\??/,
-    ],
-    answer:
-      "The capital of Japan is Tokyo. It's one of the most populated cities in the world, blending ultramodern skyscrapers with traditional temples, and is known for its technology, food scene, and efficiency.",
-  },
-  {
-    patterns: [
-      /capital (of|city of) china\??/,
-      /what('s| is) the capital of china\??/,
-    ],
-    answer:
-      "The capital of China is Beijing. It's been the cultural and political centre of China for centuries and is home to iconic landmarks like the Forbidden City, Tiananmen Square, and the Great Wall nearby.",
-  },
-  {
-    patterns: [
-      /capital (of|city of) india\??/,
-      /what('s| is) the capital of india\??/,
-    ],
-    answer:
-      "The capital of India is New Delhi. It serves as the seat of the Indian government and is distinct from Delhi — the larger metropolitan area that surrounds it.",
-  },
-  {
-    patterns: [
-      /capital (of|city of) australia\??/,
-      /what('s| is) the capital of australia\??/,
-    ],
-    answer:
-      "The capital of Australia is Canberra. Interestingly, it was purpose-built as a compromise between Sydney and Melbourne — both of which wanted to be the capital. It's home to Parliament House and the Australian War Memorial.",
-  },
-  {
-    patterns: [
-      /capital (of|city of) (brazil|brasil)\??/,
-      /what('s| is) the capital of (brazil|brasil)\??/,
-    ],
-    answer:
-      "The capital of Brazil is Brasília. Like Canberra, it was purpose-built — constructed in the late 1950s and inaugurated in 1960 — specifically to be the country's new capital, replacing Rio de Janeiro.",
-  },
-  {
-    patterns: [
-      /capital (of|city of) russia\??/,
-      /what('s| is) the capital of russia\??/,
-    ],
-    answer:
-      "The capital of Russia is Moscow. It's the largest city in Russia and one of the largest in Europe, home to the Kremlin, Red Square, and Saint Basil's Cathedral.",
-  },
-  {
-    patterns: [
-      /capital (of|city of) canada\??/,
-      /what('s| is) the capital of canada\??/,
-    ],
-    answer:
-      "The capital of Canada is Ottawa, located in the province of Ontario. Many people assume it's Toronto or Vancouver, but Ottawa was chosen as a compromise and has been the capital since 1857.",
-  },
-  {
-    patterns: [
-      /capital (of|city of) (south africa)\??/,
-      /what('s| is) the capital of (south africa)\??/,
-    ],
-    answer:
-      "South Africa actually has three capitals: Pretoria serves as the executive capital, Cape Town as the legislative capital, and Bloemfontein as the judicial capital — a unique arrangement reflecting the country's history.",
-  },
-  {
-    patterns: [
-      /capital (of|city of) nigeria\??/,
-      /what('s| is) the capital of nigeria\??/,
-    ],
-    answer:
-      "The capital of Nigeria is Abuja. It replaced Lagos as the capital in 1991, chosen for its central location and purpose-built as a neutral city for Nigeria's diverse population.",
-  },
-
-  // ── WEATHER & CLIMATE ──────────────────────────────────────────────────────
-  {
-    patterns: [
-      /what is weather\??/,
-      /what causes weather\??/,
-      /define weather/,
-      /explain weather/,
-    ],
-    answer:
-      "Weather refers to the short-term state of the atmosphere — including temperature, humidity, precipitation, wind, and cloud cover. It's caused by the Sun heating the Earth's surface unevenly, creating air pressure differences that drive wind and moisture movement, producing the conditions we experience day to day.",
+      "The speed of light in a vacuum is approximately 299,792,458 metres per second — roughly 300,000 kilometres per second. It's the universal speed limit. Light from the Sun takes about 8 minutes to reach Earth.",
   },
   {
     patterns: [
       /what is climate change\??/,
       /global warming/,
-      /what is global warming\??/,
-      /explain climate change/,
+      /greenhouse effect/,
     ],
     answer:
-      "Climate change refers to long-term shifts in global temperatures and weather patterns. While some change is natural, since the 1800s human activities — mainly burning fossil fuels — have been the main driver. This releases greenhouse gases like CO₂ that trap heat in the atmosphere, gradually warming the planet and disrupting ecosystems.",
-  },
-  {
-    patterns: [
-      /what is the greenhouse effect\??/,
-      /explain (the )?greenhouse effect/,
-      /how does the greenhouse effect work/,
-    ],
-    answer:
-      "The greenhouse effect is a natural process where certain gases in Earth's atmosphere — like CO₂, methane, and water vapour — trap some of the Sun's heat instead of letting it escape to space. Without it, Earth would be too cold for life. However, burning fossil fuels has amplified this effect, causing the planet to warm faster than natural cycles would allow.",
-  },
-
-  // ── HISTORY ────────────────────────────────────────────────────────────────
-  {
-    patterns: [
-      /who is nelson mandela\??/,
-      /tell me about (nelson )?mandela/,
-      /who was nelson mandela\??/,
-    ],
-    answer:
-      "Nelson Mandela was a South African anti-apartheid activist who became the country's first Black president in 1994. He spent 27 years in prison for opposing the apartheid regime, and upon his release became a global symbol of peaceful resistance, reconciliation, and human dignity. He was awarded the Nobel Peace Prize in 1993.",
-  },
-  {
-    patterns: [
-      /what was world war (2|two|ii)\??/,
-      /world war (2|two|ii)/,
-      /what was ww2\??/,
-      /ww2/,
-    ],
-    answer:
-      "World War II was a global conflict from 1939 to 1945 involving most of the world's nations. It began with Nazi Germany's invasion of Poland and expanded across Europe, Africa, and Asia. The war caused an estimated 70–85 million deaths and ended with Allied victory over Nazi Germany and Imperial Japan. It reshaped the world order and led to the founding of the United Nations.",
-  },
-  {
-    patterns: [
-      /who is mahatma gandhi\??/,
-      /tell me about (mahatma )?gandhi/,
-      /who was mahatma gandhi\??/,
-    ],
-    answer:
-      "Mahatma Gandhi was the leader of India's independence movement against British colonial rule. He pioneered the philosophy of nonviolent civil disobedience — using peaceful protest, strikes, and fasting to resist injustice. His approach inspired civil rights movements worldwide, and he is revered as the Father of the Nation in India. He was assassinated in 1948.",
-  },
-  {
-    patterns: [
-      /what was the cold war\??/,
-      /explain the cold war/,
-      /tell me about the cold war/,
-    ],
-    answer:
-      "The Cold War was a period of geopolitical tension between the United States and the Soviet Union from roughly 1947 to 1991. Rather than direct military conflict, it was a struggle of ideologies — capitalism versus communism — fought through proxy wars, nuclear arms races, and space exploration competitions. It ended with the collapse of the Soviet Union in 1991.",
-  },
-
-  // ── SPORTS ─────────────────────────────────────────────────────────────────
-  {
-    patterns: [
-      /what is football\??/,
-      /what is soccer\??/,
-      /define football/,
-      /explain football/,
-    ],
-    answer:
-      "Football — known as soccer in North America — is the world's most popular sport. Two teams of 11 players each try to score by getting a round ball into the opposing team's goal, using any part of the body except arms and hands. The FIFA World Cup, held every four years, is the most-watched sporting event on Earth.",
-  },
-  {
-    patterns: [
-      /what is cricket\??/,
-      /define cricket/,
-      /explain cricket/,
-      /how does cricket work/,
-    ],
-    answer:
-      "Cricket is a bat-and-ball sport played between two teams of 11 players on an oval field. A bowler delivers the ball at a wicket defended by a batsman, who tries to score runs. It's enormously popular in South Asia, Australia, England, and the Caribbean, with formats ranging from 5-day Test matches to fast-paced Twenty20 games.",
-  },
-  {
-    patterns: [
-      /who is cristiano ronaldo\??/,
-      /tell me about (cristiano )?ronaldo/,
-      /who('s| is) ronaldo\??/,
-    ],
-    answer:
-      "Cristiano Ronaldo is a Portuguese professional footballer widely regarded as one of the greatest of all time. He has won the Ballon d'Or award five times and holds records for goals scored in the Champions League and with the Portuguese national team. He's played for Sporting CP, Manchester United, Real Madrid, Juventus, and Al Nassr.",
-  },
-  {
-    patterns: [
-      /who is lionel messi\??/,
-      /tell me about (lionel )?messi/,
-      /who('s| is) messi\??/,
-    ],
-    answer:
-      "Lionel Messi is an Argentine footballer considered by many to be the greatest player of all time. He won a record eight Ballon d'Or awards and led Argentina to victory at the 2022 FIFA World Cup. He spent most of his career at FC Barcelona before moving to Paris Saint-Germain and later Inter Miami.",
+      "Climate change refers to long-term shifts in global temperatures and weather patterns, primarily driven by human activities like burning fossil fuels. This releases carbon dioxide and other greenhouse gases that trap heat in the atmosphere, causing the planet to warm and weather patterns to become more extreme.",
   },
 
   // ── GEOGRAPHY ──────────────────────────────────────────────────────────────
   {
     patterns: [
-      /what is the amazon\??/,
+      /what is the (biggest|largest) (country|nation)/,
+      /largest country in the world/,
+    ],
+    answer:
+      "Russia is the largest country in the world by land area, covering over 17 million square kilometres — roughly twice the size of Canada, the second largest.",
+  },
+  {
+    patterns: [
+      /what is the (tallest|highest) mountain/,
+      /mount everest/,
+      /highest point on earth/,
+    ],
+    answer:
+      "Mount Everest in the Himalayas is the tallest mountain above sea level, standing at 8,849 metres (29,032 feet). It sits on the border between Nepal and Tibet and was first summited by Edmund Hillary and Tenzing Norgay in 1953.",
+  },
+  {
+    patterns: [
+      /what is the (longest|biggest) river/,
+      /nile river/,
       /amazon river/,
-      /amazon rainforest/,
-      /tell me about the amazon/,
     ],
     answer:
-      "The Amazon refers to both the world's largest rainforest and its greatest river, both in South America. The Amazon Rainforest covers about 5.5 million square kilometres — primarily in Brazil — and is home to roughly 10% of all species on Earth. The Amazon River carries more water than any other river in the world, draining into the Atlantic Ocean.",
+      "The Nile in Africa is traditionally considered the world's longest river at around 6,650 kilometres, though some studies suggest the Amazon in South America may be slightly longer. The Amazon carries by far the most water of any river on Earth.",
   },
   {
     patterns: [
-      /what is mount everest\??/,
-      /tell me about mount everest/,
-      /how tall is mount everest/,
-      /highest mountain/,
+      /capital of india/,
+      /what is india's capital/,
+      /india capital city/,
     ],
     answer:
-      "Mount Everest is the highest mountain on Earth, standing at 8,848.86 metres above sea level. Located in the Himalayas on the border of Nepal and Tibet, it was first summited on 29 May 1953 by Sir Edmund Hillary and Tenzing Norgay. Thousands of climbers have attempted the summit, though it remains a formidable and dangerous challenge.",
+      "The capital of India is New Delhi. It is located in the northern part of the country and serves as the seat of the Indian government, parliament, and many national institutions.",
   },
   {
     patterns: [
-      /what is the sahara\??/,
-      /sahara desert/,
-      /tell me about the sahara/,
-      /largest desert/,
+      /capital of (the )?usa/,
+      /what is america's capital/,
+      /washington dc/,
     ],
     answer:
-      "The Sahara is the world's largest hot desert, covering about 9 million square kilometres across North Africa. Despite its reputation, about 25% of it is sand dunes — the rest is rocky plateaus, gravel plains, and even mountains. Temperatures can exceed 50°C in summer, yet some plants and animals have adapted remarkably to survive there.",
-  },
-  {
-    patterns: [
-      /how many countries (in|are (in|there in)?) the world\??/,
-      /how many countries are there\??/,
-      /number of countries in the world/,
-    ],
-    answer:
-      "There are 195 countries in the world — 193 of which are full member states of the United Nations, plus the Vatican (Holy See) and Palestine which hold observer status. The exact number can vary depending on how disputed territories and self-declared states are counted.",
+      "The capital of the United States is Washington, D.C. It houses the White House, the Capitol Building, and the Supreme Court. New York City is larger and more famous globally, but D.C. is the governmental heart of the nation.",
   },
 
-  // ── MORE TECHNOLOGY ────────────────────────────────────────────────────────
+  // ── HISTORY ────────────────────────────────────────────────────────────────
   {
-    patterns: [/what is 5g\??/, /define 5g/, /explain 5g/, /how does 5g work/],
+    patterns: [/world war (1|2|one|two|i|ii)/, /when did world war/, /ww1|ww2/],
     answer:
-      "5G is the fifth generation of mobile network technology, offering dramatically faster data speeds, lower latency, and the ability to connect many more devices simultaneously compared to 4G. It enables things like near-instant downloads, real-time remote surgery, and the backbone of smart cities and self-driving vehicles.",
+      "World War I lasted from 1914 to 1918, claiming over 20 million lives. World War II was even more devastating — from 1939 to 1945 — resulting in over 70 million deaths and reshaping the global political order. Both wars fundamentally changed how nations interact and led to the creation of international institutions.",
+  },
+  {
+    patterns: [/who is mahatma gandhi/, /tell me about gandhi/, /gandhi/],
+    answer:
+      "Mahatma Gandhi was the leader of India's independence movement against British rule. He pioneered non-violent civil disobedience and inspired movements for civil rights worldwide. His philosophy of Ahimsa — non-harm — remains deeply influential. He was assassinated in 1948, shortly after India gained independence.",
   },
   {
     patterns: [
-      /what is (the )?cloud( computing)?\??/,
-      /define cloud computing/,
-      /explain cloud computing/,
-      /how does the cloud work/,
+      /who is nelson mandela/,
+      /tell me about mandela/,
+      /nelson mandela/,
     ],
     answer:
-      "Cloud computing means using remote servers on the internet to store, manage, and process data — instead of relying on your local computer. Services like Google Drive, iCloud, and Netflix all run on the cloud. It lets you access your files from any device, scale resources on demand, and reduce the need for expensive local hardware.",
-  },
-  {
-    patterns: [
-      /what is (a |an )?(mobile )?app\??/,
-      /define (mobile )?app/,
-      /explain (mobile )?app/,
-      /what are apps\??/,
-    ],
-    answer:
-      "An app — short for application — is a software program designed to perform a specific function on a device. Mobile apps run on smartphones and tablets, while desktop apps run on computers. They can be as simple as a calculator or as complex as a social media platform, and they're distributed through app stores like Google Play or the Apple App Store.",
+      "Nelson Mandela was a South African anti-apartheid activist who spent 27 years in prison before becoming South Africa's first Black president in 1994. He won the Nobel Peace Prize in 1993 and is celebrated globally as a symbol of justice, reconciliation, and peaceful resistance.",
   },
 
-  // ── MORE FAMOUS PEOPLE ─────────────────────────────────────────────────────
+  // ── FAMOUS PEOPLE ──────────────────────────────────────────────────────────
   {
-    patterns: [
-      /who is jeff bezos\??/,
-      /tell me about jeff bezos/,
-      /who('s| is) bezos\??/,
-    ],
+    patterns: [/who is elon musk/, /tell me about elon musk/, /elon musk/],
     answer:
-      "Jeff Bezos is the founder of Amazon, which he started in 1994 as an online bookstore and grew into one of the world's most valuable companies, spanning e-commerce, cloud computing, and logistics. He also founded Blue Origin, a space company. He stepped down as Amazon's CEO in 2021 but remains executive chairman.",
+      "Elon Musk is a South African-born entrepreneur and CEO of Tesla and SpaceX. He also owns X (formerly Twitter) and co-founded PayPal and Neuralink. He's known for pushing the boundaries of electric vehicles, reusable rockets, and ambitious ideas like colonising Mars.",
   },
   {
     patterns: [
-      /who is (barack )?obama\??/,
-      /tell me about (barack )?obama/,
-      /who was (barack )?obama\??/,
-    ],
-    answer:
-      "Barack Obama was the 44th President of the United States, serving from 2009 to 2017. He was the first African American to hold the office. Before becoming president, he was a U.S. Senator from Illinois. During his presidency he oversaw the Affordable Care Act, the response to the 2008 financial crisis, and was awarded the Nobel Peace Prize in 2009.",
-  },
-
-  // ── INDIAN CINEMA (BOLLYWOOD) ──────────────────────────────────────────────
-  {
-    patterns: [
-      /who is shah rukh khan\??/,
-      /tell me about shah rukh khan/,
-      /who is srk\??/,
-    ],
-    answer:
-      "Shah Rukh Khan — often called King Khan — is one of Bollywood's biggest superstars. Known as the 'King of Romance', he has starred in iconic films like Dilwale Dulhania Le Jayenge, Kabhi Khushi Kabhie Gham, and Pathaan. He is one of the most recognised and successful actors in the world.",
-  },
-  {
-    patterns: [/who is salman khan\??/, /tell me about salman khan/],
-    answer:
-      "Salman Khan is a Bollywood megastar known for his action-packed blockbusters like the Dabangg series, Tiger Zinda Hai, and Bajrangi Bhaijaan. He is one of India's highest-paid actors and is also famous for his charity work through the Being Human Foundation.",
-  },
-  {
-    patterns: [
-      /who is amitabh bachchan\??/,
-      /tell me about amitabh bachchan/,
-      /who is big b\??/,
-    ],
-    answer:
-      "Amitabh Bachchan, known as the Shahenshah of Bollywood and Big B, is a legendary Indian actor who dominated Hindi cinema for decades. Films like Sholay, Deewar, and Don made him an icon. He is also famous for hosting the quiz show Kaun Banega Crorepati, India's version of Who Wants to Be a Millionaire.",
-  },
-
-  // ── CRICKET LEGENDS ────────────────────────────────────────────────────────
-  {
-    patterns: [
-      /who is virat kohli\??/,
+      /who is virat kohli/,
       /tell me about virat kohli/,
-      /who is kohli\??/,
+      /virat kohli/,
     ],
     answer:
-      "Virat Kohli is one of cricket's greatest modern batsmen, known for his aggressive style and incredible consistency. The former Indian captain has amassed thousands of international runs and holds numerous batting records. Off the field, he is equally known for his fitness discipline and passion. A true champion!",
+      "Virat Kohli is one of India's greatest cricketers and one of the best batsmen in the history of the sport. He's known for his aggressive style, exceptional fitness, and record-breaking run-scoring in all three formats of the game. He's a former Indian national captain and an inspiration to millions.",
   },
   {
     patterns: [
-      /who is ms dhoni\??/,
-      /tell me about (ms )?dhoni/,
-      /who is captain cool\??/,
+      /who is ms dhoni/,
+      /tell me about dhoni/,
+      /ms dhoni/,
+      /mahendra singh dhoni/,
     ],
     answer:
-      "MS Dhoni — fondly called Captain Cool — is one of India's greatest cricket captains. He led India to win the ICC World Cup in 2011, the T20 World Cup in 2007, and multiple ICC trophies. Known for his calm temperament and lightning-fast wicket-keeping, Dhoni is a legend in every sense. His helicopter shot is iconic!",
+      "MS Dhoni, known as Captain Cool, is a legendary Indian cricketer famous for his calm under pressure and exceptional finishing ability. He led India to victory in the 2007 T20 World Cup, the 2011 ODI World Cup, and the 2013 Champions Trophy. His helicopter shot and lightning-fast stumping are iconic.",
+  },
+  {
+    patterns: [/who is shah rukh khan/, /srk/, /tell me about shah rukh/],
+    answer:
+      "Shah Rukh Khan, also known as SRK, is the King of Bollywood. With over 80 films across three decades, he's one of the most successful actors in cinema history. Films like Dilwale Dulhania Le Jayenge, Kabhi Khushi Kabhie Gham, and Chennai Express are iconic. He's also a successful film producer.",
   },
   {
     patterns: [
-      /who is sachin tendulkar\??/,
-      /tell me about sachin/,
-      /who is the god of cricket\??/,
+      /who is sachin tendulkar/,
+      /sachin tendulkar/,
+      /the master blaster/,
     ],
     answer:
-      "Sachin Tendulkar is widely regarded as the greatest batsman of all time and is lovingly called the 'God of Cricket'. He scored 100 international centuries — a record that may never be broken — and represented India for 24 years. His dedication, technique, and passion for the game made him a national treasure and an inspiration to millions, including your classmates I'm sure, Tharun!",
+      "Sachin Tendulkar is widely regarded as the greatest cricketer of all time. Known as the 'Master Blaster', he holds the record for the most runs in both Test and ODI cricket. He was the first player to score 100 international centuries and retired in 2013 with a standing ovation from the entire cricketing world.",
   },
 
-  // ── MOTIVATIONAL & PHILOSOPHICAL ──────────────────────────────────────────
+  // ── PHILOSOPHY & MEANING ───────────────────────────────────────────────────
   {
     patterns: [
-      /what is the meaning of life\??/,
-      /what is life\??/,
+      /what is the meaning of life/,
       /purpose of life/,
-      /why do we exist\??/,
+      /why are we here/,
     ],
     answer:
-      "The meaning of life is one of humanity's greatest questions. Philosophers say it's about finding purpose — something that drives you forward. Scientists say it's to survive and pass on knowledge. Spiritualists say it's to grow the soul. But honestly? Many great thinkers believe the meaning isn't fixed — you create it through your choices, your connections, and what you choose to build. What's yours going to be?",
+      "Philosophers have wrestled with this for millennia. Aristotle believed the purpose of life is eudaimonia — flourishing and living well. Existentialists like Sartre say life has no inherent meaning; you create your own. Spiritually, many traditions speak of love, service, and connection. My take? Find what makes you feel most alive and do more of it.",
   },
   {
-    patterns: [
-      /how to be happy\??/,
-      /what is happiness\??/,
-      /how can (i|we) be happy/,
-      /tips for happiness/,
-    ],
+    patterns: [/what is happiness\??/, /how to be happy/, /key to happiness/],
     answer:
-      "Happiness isn't a destination — it's a practice. Research consistently shows that strong relationships, a sense of purpose, regular exercise, gratitude, and helping others are the most reliable paths to lasting happiness. Material things bring short bursts of joy, but experiences and connections create lasting fulfilment. Start small — even a five-minute gratitude reflection daily can shift your mindset significantly.",
-  },
-  {
-    patterns: [
-      /how to be successful\??/,
-      /what is success\??/,
-      /tips for success/,
-      /how (do i|can i) succeed/,
-    ],
-    answer:
-      "Success is deeply personal — it looks different for everyone. But the patterns are consistent: clear goals, persistent effort, learning from failure, and surrounding yourself with people who inspire you. The most successful people aren't the ones who never fail — they're the ones who fail, learn, and keep going. Remember, Tharun, consistency beats intensity every single time.",
-  },
-  {
-    patterns: [
-      /how to study (better|effectively|smarter)\??/,
-      /tips for studying/,
-      /how (do i|can i|to) study/,
-      /study techniques/,
-    ],
-    answer:
-      "Great question! The science of learning is fascinating. Top techniques: spaced repetition — reviewing material over increasing intervals — beats cramming every time. Active recall, where you test yourself instead of rereading, is far more effective. The Pomodoro technique — 25 minutes focused, 5 minutes rest — keeps your brain fresh. And always teach what you've learned to someone else; if you can explain it simply, you truly understand it.",
+      "Research consistently shows that happiness comes from strong relationships, a sense of purpose, gratitude, acts of kindness, physical movement, and being present. It's less about circumstances and more about mindset and habits. Small daily choices compound over time into a deeply fulfilling life.",
   },
 
-  // ── ABSTRACT CONCEPTS ─────────────────────────────────────────────────────
+  // ── MOTIVATION ─────────────────────────────────────────────────────────────
   {
     patterns: [
-      /what is love\??/,
-      /define love/,
-      /what does love mean\??/,
-      /explain love/,
+      /motivate me/,
+      /give me motivation/,
+      /i need motivation/,
+      /inspire me/,
     ],
     answer:
-      "Love is one of the most powerful and complex human experiences. Neurologically, it involves oxytocin, dopamine, and serotonin — chemicals that create feelings of bonding, euphoria, and contentment. Philosophically, the ancient Greeks described eight types of love: eros (romantic), philia (friendship), storge (family), agape (unconditional), and more. At its core, love is about deep connection, care, and choosing someone's wellbeing as important as your own.",
+      "Here's something to carry with you, Tharun: every expert was once a beginner. Every great achievement started as a single small step. The only way to fail is to stop trying. You've already shown up today — that matters more than most people realise. Keep going.",
   },
   {
     patterns: [
-      /what is friendship\??/,
-      /define friendship/,
-      /what makes a good friend\??/,
+      /i'm feeling (sad|down|low|depressed)/,
+      /i feel sad/,
+      /cheer me up/,
     ],
     answer:
-      "Friendship is one of life's greatest gifts — a voluntary bond built on trust, mutual respect, shared experiences, and genuine care. Aristotle wrote that there are three kinds of friendship: those based on utility, those based on pleasure, and those based on virtue — the deepest kind, where you value each other for who you truly are. A good friend challenges you to grow while accepting you as you are.",
-  },
-
-  // ── ADVANCED TECHNOLOGY ────────────────────────────────────────────────────
-  {
-    patterns: [
-      /what is machine learning\??/,
-      /define machine learning/,
-      /explain machine learning/,
-    ],
-    answer:
-      "Machine learning is a branch of artificial intelligence where computers learn from data instead of being explicitly programmed. Rather than writing rules, you feed the system examples and it finds patterns itself. For instance, a spam filter learns what spam looks like by seeing thousands of examples — and gets better over time. It powers everything from YouTube recommendations to medical diagnoses.",
-  },
-  {
-    patterns: [
-      /what is deep learning\??/,
-      /define deep learning/,
-      /explain deep learning/,
-    ],
-    answer:
-      "Deep learning is a subfield of machine learning inspired by the human brain. It uses artificial neural networks with many layers — hence 'deep' — to learn from enormous amounts of data. Deep learning is behind facial recognition, real-time translation, voice assistants like me, and image generation AI. The more data and computing power available, the better these models get.",
-  },
-  {
-    patterns: [
-      /what is (a |an )?neural network\??/,
-      /define neural network/,
-      /explain neural network/,
-      /how do neural networks work/,
-    ],
-    answer:
-      "A neural network is a computing system loosely inspired by the neurons in a human brain. It consists of layers of interconnected nodes — each passing information forward and adjusting based on feedback. During training, the network learns to recognise patterns in data by strengthening useful connections and weakening unhelpful ones. It's the foundation of most modern AI systems, including the intelligence powering responses like this one.",
-  },
-  {
-    patterns: [
-      /what is chatgpt\??/,
-      /what is gpt\??/,
-      /tell me about chatgpt/,
-      /who made chatgpt/,
-    ],
-    answer:
-      "ChatGPT is an AI language model developed by OpenAI, released to the public in late 2022. It uses a large language model — GPT, or Generative Pre-trained Transformer — trained on enormous amounts of text data to generate human-like responses. It became one of the fastest-growing consumer products in history, sparking a global conversation about AI's role in education, work, and society.",
-  },
-  {
-    patterns: [
-      /what is cryptocurrency\??/,
-      /define cryptocurrency/,
-      /explain cryptocurrency/,
-      /what are cryptocurrencies\??/,
-    ],
-    answer:
-      "Cryptocurrency is a digital form of currency that uses cryptography to secure transactions and control the creation of new units. Unlike traditional money, most cryptocurrencies operate on decentralised blockchain networks — meaning no single bank or government controls them. Bitcoin was the first, created in 2009. Since then, thousands of cryptocurrencies have emerged, with very different use cases and levels of volatility.",
-  },
-  {
-    patterns: [
-      /what is bitcoin\??/,
-      /define bitcoin/,
-      /explain bitcoin/,
-      /who created bitcoin/,
-      /how does bitcoin work/,
-    ],
-    answer:
-      "Bitcoin is the world's first and most well-known cryptocurrency, created in 2009 by an anonymous person or group known as Satoshi Nakamoto. It runs on a decentralised blockchain — a public ledger recording every transaction. New bitcoins are created through 'mining', which requires significant computing power. Bitcoin's limited supply of 21 million coins is central to its value proposition as 'digital gold.'",
+      "Hey Tharun, I hear you. Everyone has moments like this, and it's okay to feel what you're feeling. Take a breath. Remember that emotions are temporary — they pass. Is there something specific on your mind? I'm right here if you want to talk it through.",
   },
 
-  // ── INDIAN STATES ─────────────────────────────────────────────────────────
+  // ── INDIA ──────────────────────────────────────────────────────────────────
   {
-    patterns: [
-      /capital of (andhra pradesh)\??/,
-      /what is the capital of (andhra pradesh)\??/,
-    ],
+    patterns: [/tell me about india/, /what is india/, /india country/],
     answer:
-      "Andhra Pradesh has two capitals: Amaravati serves as the legislative capital, while Visakhapatnam is being developed as the executive capital. The state is known for its rich culture, spicy cuisine, and landmarks like Tirumala Tirupati — one of the world's most visited religious sites. Being from Andhra Pradesh myself, in a manner of speaking, I have a soft spot for it!",
+      "India is the world's most populous country and a vibrant democracy. It's a land of incredible diversity — 22 official languages, dozens of religions, thousands of years of history, and one of the fastest-growing economies on the planet. From the Himalayas to tropical beaches, from Bollywood to cutting-edge tech, India is extraordinary.",
+  },
+  {
+    patterns: [/what is ipl\??/, /indian premier league/, /tell me about ipl/],
+    answer:
+      "The Indian Premier League (IPL) is the world's most popular cricket tournament, held annually since 2008. It's a Twenty20 competition featuring city-based franchise teams with the world's best players. The IPL has transformed cricket globally, combining elite sport with Bollywood-style entertainment.",
+  },
+
+  // ── MATHS ──────────────────────────────────────────────────────────────────
+  {
+    patterns: [/what is pi\??/, /what is the value of pi/, /define pi/],
+    answer:
+      "Pi (π) is a mathematical constant representing the ratio of a circle's circumference to its diameter. Its value is approximately 3.14159265358979… and it goes on infinitely without repeating. It's one of the most important and fascinating numbers in all of mathematics.",
   },
   {
     patterns: [
-      /capital of telangana\??/,
-      /what is the capital of telangana\??/,
+      /what is pythagoras/,
+      /pythagoras theorem/,
+      /pythagorean theorem/,
     ],
     answer:
-      "The capital of Telangana is Hyderabad — the City of Pearls. Hyderabad is one of India's major tech hubs, home to countless IT companies, the iconic Charminar, and the flavourful Hyderabadi biryani that is genuinely world-famous. Telangana became a separate state from Andhra Pradesh in 2014.",
-  },
-  {
-    patterns: [
-      /capital of maharashtra\??/,
-      /what is the capital of maharashtra\??/,
-    ],
-    answer:
-      "The capital of Maharashtra is Mumbai — formerly known as Bombay. Mumbai is India's financial capital, home to Bollywood, the Bombay Stock Exchange, and one of the world's most densely populated urban areas. It's a city that never sleeps, full of ambition, dreams, and incredible street food.",
+      "The Pythagorean theorem states that in a right-angled triangle, the square of the hypotenuse equals the sum of the squares of the other two sides: a² + b² = c². It was known to ancient civilisations and is the foundation of much of geometry and trigonometry.",
   },
 ];
 
 /**
- * Search recent conversation history for answers that might be relevant.
- * Returns a brief summary if something relevant is found.
+ * Attempt to answer a general question from the built-in knowledge base.
+ * Returns a string if a match is found, or null to allow further fallback.
  */
-function searchHistory(
+export function answerGeneral(
   input: string,
-  history: HistoryMessage[],
+  _history: HistoryMessage[] = [],
 ): string | null {
-  if (!history.length) return null;
+  const lower = input.toLowerCase().trim();
 
-  // Extract key words (words longer than 3 chars, ignore stopwords)
-  const stopwords = new Set([
-    "what",
-    "when",
-    "where",
-    "which",
-    "that",
-    "this",
-    "with",
-    "from",
-    "have",
-    "does",
-    "your",
-    "tell",
-    "about",
-    "explain",
-    "define",
-    "more",
-  ]);
-  const words = input
-    .toLowerCase()
-    .replace(/[^a-z\s]/g, "")
-    .split(/\s+/)
-    .filter((w) => w.length > 3 && !stopwords.has(w));
-
-  if (!words.length) return null;
-
-  // Look at the last 20 messages, only Jarvis replies
-  const jarvisReplies = history
-    .slice(-20)
-    .filter((m) => m.role !== "user")
-    .map((m) => m.text);
-
-  for (const reply of jarvisReplies.reverse()) {
-    const lower = reply.toLowerCase();
-    const matchCount = words.filter((w) => lower.includes(w)).length;
-    if (matchCount >= 2) {
-      // Found a relevant prior answer — summarise it
-      const short =
-        reply.length > 180
-          ? `${reply.slice(0, 180).replace(/\s\w+$/, "")}…`
-          : reply;
-      return `Based on what we've already discussed: ${short}`;
+  for (const entry of KNOWLEDGE_BASE) {
+    for (const pattern of entry.patterns) {
+      if (pattern.test(lower)) {
+        const raw =
+          typeof entry.answer === "function" ? entry.answer() : entry.answer;
+        // 30% chance to prefix with a varied starter
+        if (Math.random() < 0.3) {
+          return randomStarter() + raw;
+        }
+        return raw;
+      }
     }
   }
 
@@ -855,34 +409,41 @@ function searchHistory(
 }
 
 /**
- * Main intelligence function. Returns a natural answer or null if unknown.
+ * Web search fallback using the Wikipedia REST API.
+ * Extracts a plain-English summary and returns a friendly answer string.
+ * Returns null if nothing useful is found.
  */
-export function answerGeneral(
-  input: string,
-  recentHistory: HistoryMessage[],
-): string | null {
-  const text = input
-    .toLowerCase()
-    .trim()
-    .replace(/[?!.]+$/, "");
+export async function searchWeb(query: string): Promise<string | null> {
+  try {
+    // Strip common filler words to get a clean search term
+    const term = query
+      .replace(
+        /^(what is|who is|tell me about|explain|define|how does|how do|what are|what was|when did|where is|why is|why are|can you tell me about)\s+/i,
+        "",
+      )
+      .replace(/\?+$/, "")
+      .trim();
 
-  // Try knowledge base first
-  for (const entry of KNOWLEDGE_BASE) {
-    if (entry.patterns.some((p) => p.test(text))) {
-      const raw =
-        typeof entry.answer === "function" ? entry.answer() : entry.answer;
-      // Only prepend a starter if the answer doesn't already start with one
-      const needsStarter =
-        !/^(my name|i was|i can|i'm|the |a |dna|water|python|javascript|artificial|gravity|the sun|the moon|earth|a black)/i.test(
-          raw,
-        );
-      return needsStarter ? randomStarter() + raw : raw;
-    }
+    if (!term || term.length < 2) return null;
+
+    const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(term)}`;
+    const res = await fetch(url, {
+      headers: { Accept: "application/json" },
+    });
+
+    if (!res.ok) return null;
+
+    const data = await res.json();
+
+    if (!data.extract || data.type === "disambiguation") return null;
+
+    const extract = data.extract as string;
+    const trimmed = extract.slice(0, 320).trim();
+    const dotIndex = trimmed.lastIndexOf(".");
+    const clean = dotIndex > 80 ? trimmed.slice(0, dotIndex + 1) : trimmed;
+
+    return `According to my web search, ${clean}`;
+  } catch {
+    return null;
   }
-
-  // Fall back to history search
-  const fromHistory = searchHistory(input, recentHistory);
-  if (fromHistory) return fromHistory;
-
-  return null;
 }
